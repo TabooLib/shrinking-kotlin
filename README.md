@@ -7,6 +7,7 @@ plugins {
 }
 
 shrinking {
+    // 这个类会在编译后被移除
     annotation = "org.tabooproject.reflex.Internal"
 }
 ```
