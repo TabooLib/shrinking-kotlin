@@ -115,6 +115,36 @@ class ShrinkingClassVisitor extends ClassVisitor {
     }
 
     @Override
+    MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+        return super.visitMethod(access, name, descriptor, signature, exceptions)
+    }
+
+    @Override
     void visitSource(String source, String debug) {
+    }
+}
+
+class ShrinkingMethodVisitor extends MethodVisitor {
+
+    ShrinkingMethodVisitor(MethodVisitor methodVisitor) {
+        super(Opcodes.ASM9, methodVisitor)
+    }
+
+    @Override
+    void visitVarInsn(int opcode, int i) {
+        super.visitVarInsn(opcode, i)
+    }
+
+    @Override
+    void visitLdcInsn(Object value) {
+        super.visitLdcInsn(value)
+    }
+
+    @Override
+    void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
+        if (opcode == Opcodes.H_INVOKESTATIC) {
+
+        }
+        super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
     }
 }
