@@ -37,6 +37,8 @@ class Plugin implements org.gradle.api.Plugin<Project> {
 class ShrinkingExt {
 
     String annotation
+
+    List<String> packages
 }
 
 class ShrinkingJar extends DefaultTask {
@@ -60,7 +62,7 @@ class ShrinkingJar extends DefaultTask {
                         if (path.endsWith(".kotlin_module")) {
                             return true
                         }
-                        if (path == ext.annotation.replace('.', '/') + ".class") {
+                        if (ext.annotation != null && path == ext.annotation.replace('.', '/') + ".class") {
                             return true
                         }
                         try {
@@ -69,10 +71,10 @@ class ShrinkingJar extends DefaultTask {
                             println(zipException)
                             return true
                         }
-                        if (jarEntry.name.endsWith(".class")) {
+                        if (path.endsWith(".class")) {
                             def reader = new ClassReader(it)
                             def writer = new ClassWriter(0)
-                            def visitor = new ShrinkingClassVisitor(writer, project, ext)
+                            def visitor = new ShrinkingClassVisitor(writer, project, ext, path)
                             reader.accept(visitor, 0)
                             outJar.write(writer.toByteArray())
                         } else {
@@ -97,15 +99,18 @@ class ShrinkingClassVisitor extends ClassVisitor {
 
     boolean exclude;
 
-    ShrinkingClassVisitor(ClassVisitor classVisitor, Project project, ShrinkingExt ext) {
+    ShrinkingClassVisitor(ClassVisitor classVisitor, Project project, ShrinkingExt ext, String name) {
         super(Opcodes.ASM9, classVisitor);
         this.project = project
         this.ext = ext
+        if (ext.packages != null && ext.packages.any { name.startsWith(it.replace('.', '/')) }) {
+            exclude = true
+        }
     }
 
     @Override
     AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-        if (descriptor == "L" + ext.annotation.replace('.', '/') + ";") {
+        if (ext.annotation != null && descriptor == "L" + ext.annotation.replace('.', '/') + ";") {
             exclude = true
             return null
         } else if (exclude && descriptor == "Lkotlin/Metadata;") {
