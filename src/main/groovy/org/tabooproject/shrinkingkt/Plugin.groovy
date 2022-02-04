@@ -126,6 +126,10 @@ class ShrinkingClassVisitor extends ClassVisitor {
 
     @Override
     void visitSource(String source, String debug) {
+        if (exclude) {
+            return
+        }
+        super.visitSource(source, debug)
     }
 }
 
