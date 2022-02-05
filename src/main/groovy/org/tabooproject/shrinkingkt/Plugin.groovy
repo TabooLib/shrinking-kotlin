@@ -23,6 +23,10 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         def shrinkingExt = project.extensions.create('shrinking', ShrinkingExt)
         def shrinkingTask = project.tasks.create('shrinkingJar', ShrinkingJar)
         project.afterEvaluate {
+            def shadowPresent = project.plugins.hasPlugin('com.github.johnrengelman.shadow')
+            if (shadowPresent) {
+                shrinkingTask.dependsOn(project.tasks.getByName('shadowJar'))
+            }
             project.tasks.jar.finalizedBy(shrinkingTask)
             def jarTask = project.tasks.jar as Jar
             shrinkingTask.configure { ShrinkingJar task ->
