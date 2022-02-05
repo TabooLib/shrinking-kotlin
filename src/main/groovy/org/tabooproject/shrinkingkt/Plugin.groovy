@@ -24,7 +24,7 @@ class Plugin implements org.gradle.api.Plugin<Project> {
         def shrinkingTask = project.tasks.create('shrinkingJar', ShrinkingJar)
         project.afterEvaluate {
             def shadowPresent = project.plugins.hasPlugin('com.github.johnrengelman.shadow')
-            if (shadowPresent) {
+            if (shadowPresent && shrinkingExt.shadow) {
                 shrinkingTask.dependsOn(project.tasks.getByName('shadowJar'))
             }
             project.tasks.jar.finalizedBy(shrinkingTask)
@@ -39,6 +39,8 @@ class Plugin implements org.gradle.api.Plugin<Project> {
 
 @Canonical
 class ShrinkingExt {
+
+    boolean shadow = false
 
     String annotation
 
