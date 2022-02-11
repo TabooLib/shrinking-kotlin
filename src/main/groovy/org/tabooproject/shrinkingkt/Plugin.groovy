@@ -65,9 +65,9 @@ class ShrinkingJar extends DefaultTask {
                 jarFile.entries().each { jarEntry ->
                     jarFile.getInputStream(jarEntry).withCloseable {
                         def path = jarEntry.name
-                        if (path.endsWith(".kotlin_module")) {
-                            return true
-                        }
+//                        if (path.endsWith(".kotlin_module")) {
+//                            return true
+//                        }
                         if (ext.annotation != null && path == ext.annotation.replace('.', '/') + ".class") {
                             return true
                         }
@@ -130,13 +130,13 @@ class ShrinkingClassVisitor extends ClassVisitor {
         return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 
-//    @Override
-//    void visitSource(String source, String debug) {
-//        if (exclude) {
-//            return
-//        }
-//        super.visitSource(source, debug)
-//    }
+    @Override
+    void visitSource(String source, String debug) {
+        if (exclude) {
+            return
+        }
+        super.visitSource(source, debug)
+    }
 }
 
 class ShrinkingMethodVisitor extends MethodVisitor {
