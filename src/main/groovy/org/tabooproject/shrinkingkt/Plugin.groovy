@@ -130,13 +130,13 @@ class ShrinkingClassVisitor extends ClassVisitor {
         return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 
-    @Override
-    void visitSource(String source, String debug) {
-        if (exclude) {
-            return
-        }
-        super.visitSource(source, debug)
-    }
+//    @Override
+//    void visitSource(String source, String debug) {
+//        if (exclude) {
+//            return
+//        }
+//        super.visitSource(source, debug)
+//    }
 }
 
 class ShrinkingMethodVisitor extends MethodVisitor {
